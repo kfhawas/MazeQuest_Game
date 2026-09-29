@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MazeQuest Mini</title>
+  <meta name="description" content="A mini top-down puzzle adventure: find the key, pull the lever, dodge the spikes, push the crate and escape." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-state="menu">
+  <main class="app">
+    <!-- HUD / level interface -->
+    <header class="hud" aria-label="Level interface">
+      <div class="hud-left">
+        <div class="hud-hearts" id="hud-hearts" aria-label="Hearts"></div>
+        <div class="hud-chip" title="Gems collected"><span class="ico gem">◆</span><span id="hud-gems">0 / 0</span></div>
+        <div class="hud-chip key" id="hud-key" title="No key"><span class="ico">🗝️</span></div>
+        <div class="hud-chip lever" id="hud-lever" title="Lever gate"><span class="ico">⚙️</span></div>
+      </div>
+      <div class="hud-center" id="level-name">MazeQuest Mini</div>
+      <div class="hud-right">
+        <div class="hud-chip time" title="Time"><span class="ico">⏱</span><span id="hud-time">00:00</span></div>
+        <button class="icon-btn btn-sound" title="Sound on/off" aria-label="Toggle sound">🔊</button>
+        <button class="icon-btn" id="btn-restart-hud" title="Restart level (R)" aria-label="Restart">↻</button>
+        <button class="icon-btn" id="btn-pause" title="Pause (Esc)" aria-label="Pause">❚❚</button>
+      </div>
+    </header>
+
+    <section class="stage">
+      <canvas id="game" width="840" height="600" tabindex="0" aria-label="Game board. Click a tile to walk there."></canvas>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+      <!-- Start menu -->
+      <div class="screen active" id="screen-menu">
+        <div class="panel">
+          <div class="logo">MAZEQUEST<br /><span>MINI</span></div>
+          <p class="tag">Find the key. Pull the lever. Dodge the spikes. Escape the cellar.</p>
+          <button class="btn primary" id="btn-play">▶ Play</button>
+          <button class="btn" id="btn-howto">? How to Play</button>
+          <button class="btn ghost btn-sound" aria-label="Toggle sound">🔊</button>
+          <p class="small" id="menu-best"></p>
+        </div>
+      </div>
+
+      <!-- How to play -->
+      <div class="screen" id="screen-howto">
+        <div class="panel wide">
+          <h2>How to Play</h2>
+          <div class="howto-grid">
+            <div><kbd>W A S D</kbd> / <kbd>Arrows</kbd><p>Move the hero</p></div>
+            <div><kbd>Click</kbd> a tile<p>Auto-walk there</p></div>
+            <div><kbd>E</kbd> / <kbd>Space</kbd><p>Pull an adjacent lever</p></div>
+            <div><kbd>Esc</kbd> / <kbd>P</kbd><p>Pause · <kbd>R</kbd> restart</p></div>
+          </div>
+          <ul class="legend">
+            <li><b class="c-gold">🗝️ Key</b> opens the <b>locked door</b>.</li>
+            <li><b class="c-orange">⚙️ Lever</b> raises the <b>orange gate</b>.</li>
+            <li><b class="c-red">▲ Spikes</b> pop up in waves — watch the wobble, then run.</li>
+            <li><b class="c-teal">▣ Crate</b> — push it onto the <b>plate</b> to open the <b>teal gate</b>.</li>
+            <li><b class="c-gem">◆ Gems</b> earn stars · <b class="c-red">❤ Hearts</b> heal · 🚩 flags save your spot.</li>
+          </ul>
+          <button class="btn primary" id="btn-howto-back">Got it</button>
+        </div>
+      </div>
+
+      <!-- Pause -->
+      <div class="screen" id="screen-pause">
+        <div class="panel">
+          <h2>Paused</h2>
+          <button class="btn primary" id="btn-resume">▶ Resume</button>
+          <button class="btn" id="btn-restart">↻ Restart Level</button>
+          <button class="btn" id="btn-pause-howto">? How to Play</button>
+          <button class="btn ghost" id="btn-pause-menu">⌂ Main Menu</button>
+        </div>
+      </div>
+
+      <!-- Win -->
+      <div class="screen" id="screen-win">
+        <div class="panel">
+          <h2>Level Complete!</h2>
+          <div class="stars" id="win-stars"></div>
+          <dl class="stats">
+            <dt>Time</dt><dd id="win-time">—</dd>
+            <dt>Gems</dt><dd id="win-gems">—</dd>
+            <dt>Hearts left</dt><dd id="win-hearts">—</dd>
+            <dt>Best</dt><dd id="win-best">—</dd>
+          </dl>
+          <button class="btn primary" id="btn-win-again">↻ Play Again</button>
+          <button class="btn ghost" id="btn-win-menu">⌂ Main Menu</button>
+        </div>
+      </div>
+
+      <!-- Game over -->
+      <div class="screen" id="screen-over">
+        <div class="panel">
+          <h2 class="c-red">Game Over</h2>
+          <p class="tag">The cellar claims another adventurer…</p>
+          <button class="btn primary" id="btn-over-retry">↻ Try Again</button>
+          <button class="btn ghost" id="btn-over-menu">⌂ Main Menu</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- On-screen controls (touch / mouse) -->
+    <section class="controls" aria-label="On-screen controls">
+      <div class="dpad">
+        <button data-dir="up" class="up" aria-label="Up">▲</button>
+        <button data-dir="left" class="left" aria-label="Left">◀</button>
+        <button data-dir="right" class="right" aria-label="Right">▶</button>
+        <button data-dir="down" class="down" aria-label="Down">▼</button>
+      </div>
+      <button class="action" id="btn-action" aria-label="Use">USE</button>
+    </section>
+  </main>
+
+  <script src="js/level1.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

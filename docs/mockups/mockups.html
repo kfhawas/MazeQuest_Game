@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>MazeQuest Mini — UI Wireframes</title>
+<style>
+  :root { --ink:#2b2b33; --mid:#8a8a96; --soft:#d9d9e0; --paper:#f6f5f0; --note:#e8590c; --hi:#ffd54a; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#e9e7df; font-family: "Comic Sans MS","Segoe Print",ui-rounded,system-ui,sans-serif; color:var(--ink); }
+  .frame { width: 900px; height: 640px; margin: 36px 20px 20px; background: var(--paper); overflow: visible; border: 3px solid var(--ink); border-radius: 14px; position: relative; padding: 18px; }
+  .title { position:absolute; top:-14px; left:20px; z-index:2; background: var(--ink); color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 14px; }
+  .box { border: 2px solid var(--ink); border-radius: 8px; background: #fff; }
+  .dash { border: 2px dashed var(--mid); border-radius: 8px; }
+  .row { display:flex; gap:8px; align-items:center; }
+  .note { position:absolute; color: var(--note); font-size: 13px; line-height:1.3; max-width: 180px; }
+  .note::before { content: "➜ "; }
+  .btn { border: 2px solid var(--ink); border-radius: 8px; padding: 10px; text-align:center; font-weight:bold; background:#fff; }
+  .btn.p { background: var(--hi); }
+  .chip { border: 2px solid var(--ink); border-radius: 6px; padding: 3px 8px; font-size: 13px; background:#fff; }
+  .hud { height: 46px; padding: 0 10px; justify-content: space-between; }
+  .grid { display:grid; grid-template-columns: repeat(21, 1fr); gap:0; border:2px solid var(--ink); }
+  .grid div { aspect-ratio:1; border: 1px solid #eee; font-size: 11px; display:flex; align-items:center; justify-content:center; font-weight:bold; }
+  .w { background: #9b98a8; }
+  .overlay { position:absolute; inset: 70px 30px 110px; background: rgba(40,40,50,.25); border-radius: 8px; display:flex; align-items:center; justify-content:center; }
+  .panel { width: 320px; padding: 18px; display:flex; flex-direction:column; gap:10px; background:#fff; border:3px solid var(--ink); border-radius: 12px; text-align:center; }
+</style>
+</head>
+<body>
+
+<!-- 1. Start menu -->
+<section class="frame" id="m1">
+  <span class="title">01 · Start Menu</span>
+  <div class="dash" style="position:absolute; inset:30px; display:flex; align-items:center; justify-content:center;">
+    <div class="panel">
+      <div style="font-size:30px; font-weight:900; letter-spacing:2px;">MAZEQUEST<br><span style="font-size:20px">MINI</span></div>
+      <div style="color:var(--mid); font-size:13px">tagline: find the key · escape the cellar</div>
+      <div class="btn p">▶ PLAY</div>
+      <div class="btn">? HOW TO PLAY</div>
+      <div class="btn" style="width:60px; align-self:center">🔊</div>
+      <div style="color:var(--mid); font-size:12px">Best time: 00:42</div>
+    </div>
+  </div>
+  <div class="note" style="left:40px; top:120px">Animated tile background (the cellar floor) behind the menu</div>
+  <div class="note" style="right:40px; top:250px">Primary CTA is the brightest element. Enter key also starts.</div>
+  <div class="note" style="right:40px; top:360px">Mute toggle persists for the session</div>
+  <div class="note" style="left:40px; bottom:90px">Best time read from local storage (hidden if none)</div>
+</section>
+
+<!-- 2. Gameplay / level interface -->
+<section class="frame" id="m2">
+  <span class="title">02 · Level Interface (HUD + board + controls)</span>
+  <div class="box row hud" style="width:560px">
+    <div class="row"><span>❤❤❤</span><span class="chip">◆ 4 / 13</span><span class="chip">🗝</span><span class="chip">⚙</span></div>
+    <div style="font-size:11px; color:var(--mid)">Level 1 · Cellar</div>
+    <div class="row"><span class="chip">⏱ 00:37</span><span class="chip">🔊</span><span class="chip">↻</span><span class="chip">❚❚</span></div>
+  </div>
+  <div class="grid" id="board" style="margin-top:10px; width: 560px;"></div>
+  <div class="row" style="margin-top:10px; justify-content:space-between; width:560px">
+    <div style="display:grid; grid-template-columns:repeat(3,34px); grid-template-rows:repeat(3,34px); gap:3px">
+      <span></span><div class="btn" style="padding:4px">▲</div><span></span>
+      <div class="btn" style="padding:4px">◀</div><span></span><div class="btn" style="padding:4px">▶</div>
+      <span></span><div class="btn" style="padding:4px">▼</div><span></span>
+    </div>
+    <div class="dash" style="padding:6px 12px; font-size:13px">toast: "🗝 You found the golden key!"</div>
+    <div class="btn" style="border-radius:50%; width:64px; height:64px; display:flex; align-items:center; justify-content:center">USE</div>
+  </div>
+  <div class="note" style="left:600px; top:40px; max-width:260px">HUD: hearts · gems · key slot (lights up when held) · lever state · timer · sound · restart · pause</div>
+  <div class="note" style="left:600px; top:140px; max-width:260px">Board 21×15 tiles. Click any tile → hero auto-walks (BFS path). Click a lever / door next to you to use it.</div>
+  <div class="note" style="left:600px; top:250px; max-width:260px">Legend: S start · X exit · k key · D door · L lever · G gate · ^ spikes · B crate · P plate · H plate-gate · * gem · + heart · c checkpoint</div>
+  <div class="note" style="left:600px; top:390px; max-width:260px">Zones flow top-left → top-right → spike corridor → crate room → exit</div>
+  <div class="note" style="left:600px; top:480px; max-width:260px">On-screen D-pad + USE button for mouse/touch play</div>
+</section>
+
+<!-- 3. Pause + How to play -->
+<section class="frame" id="m3">
+  <span class="title">03 · Pause & How to Play overlays</span>
+  <div class="row" style="gap:30px; justify-content:center; height:100%">
+    <div class="panel">
+      <div style="font-size:20px; font-weight:900">PAUSED</div>
+      <div class="btn p">▶ Resume</div>
+      <div class="btn">↻ Restart Level</div>
+      <div class="btn">? How to Play</div>
+      <div class="btn" style="border-style:dashed">⌂ Main Menu</div>
+    </div>
+    <div class="panel" style="width:420px">
+      <div style="font-size:20px; font-weight:900">HOW TO PLAY</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:13px">
+        <div class="box" style="padding:6px">WASD / Arrows<br><small>move</small></div>
+        <div class="box" style="padding:6px">Click tile<br><small>auto-walk</small></div>
+        <div class="box" style="padding:6px">E / Space<br><small>use lever</small></div>
+        <div class="box" style="padding:6px">Esc · R<br><small>pause · restart</small></div>
+      </div>
+      <div style="text-align:left; font-size:13px">🗝 key → door · ⚙ lever → gate · ▲ spikes rise in waves · ▣ crate → plate → gate · ◆ gems = stars</div>
+      <div class="btn p">Got it</div>
+    </div>
+  </div>
+  <div class="note" style="left:40px; bottom:40px; max-width:400px">Overlays dim + blur the board. Timer stops while paused. Losing window focus auto-pauses.</div>
+</section>
+
+<!-- 4. Win + Game over -->
+<section class="frame" id="m4">
+  <span class="title">04 · Level Complete & Game Over</span>
+  <div class="row" style="gap:30px; justify-content:center; height:100%">
+    <div class="panel">
+      <div style="font-size:20px; font-weight:900">LEVEL COMPLETE!</div>
+      <div style="font-size:40px">★ ★ ☆</div>
+      <div style="display:grid; grid-template-columns:1fr auto; text-align:left; gap:4px; font-size:14px">
+        <span>Time</span><b>00:58</b><span>Gems</span><b>9 / 13</b><span>Hearts left</span><b>2 / 3</b><span>Best</span><b>00:42</b>
+      </div>
+      <div class="btn p">↻ Play Again</div>
+      <div class="btn" style="border-style:dashed">⌂ Main Menu</div>
+    </div>
+    <div class="panel">
+      <div style="font-size:20px; font-weight:900; color:#c92a2a">GAME OVER</div>
+      <div style="color:var(--mid); font-size:13px">The cellar claims another adventurer…</div>
+      <div class="btn p">↻ Try Again</div>
+      <div class="btn" style="border-style:dashed">⌂ Main Menu</div>
+    </div>
+  </div>
+  <div class="note" style="left:40px; bottom:40px; max-width:520px">Stars: 1 = finished · 2 = ≥50% gems · 3 = all gems under par time (90s)</div>
+</section>
+
+<script>
+  const map = [
+    "#####################","#S...*.#....#.....*.#","#.##.#.#.##.#.###.#.#","#....#.D..*....*#...#",
+    "#.###..###.###.##.#.#","#*..#.##.....#..L.#.#","#.#...k#.*#....#*...#","###################G#",
+    "#..*.^^.^^^.^^.^^.c.#","#.###################","#c*.##########......#","#....B....P..H.....X#",
+    "#..+##########.....*#","#*..##########*....*#","#####################"];
+  const board = document.getElementById("board");
+  map.join("").split("").forEach((c) => {
+    const d = document.createElement("div");
+    if (c === "#") d.className = "w"; else if (c !== ".") d.textContent = c;
+    if ("SX".includes(c)) d.style.background = "#ffe9a8";
+    if ("DGH".includes(c)) d.style.background = "#ffd0b0";
+    board.appendChild(d);
+  });
+</script>
+</body>
+</html>
